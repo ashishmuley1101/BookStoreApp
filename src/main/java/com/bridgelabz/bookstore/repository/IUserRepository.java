@@ -11,9 +11,12 @@ import java.util.List;
 @Repository
 public interface IUserRepository extends JpaRepository<UserModel,Integer> {
 
-    @Query(value = "select * from book_store WHERE email =:email",nativeQuery = true)
+    @Query(value = "select * from book_store_tbl WHERE email =:email",nativeQuery = true)
     List<UserModel> findUserModelDataByEmailId(String email);
 
 
     UserModel findByEmail(String email);
+
+    @Query(value = "select * from book_store_tbl WHERE verification_Code =:verificationCode",nativeQuery = true)
+    UserModel findByVerificationCode(String verificationCode);
 }

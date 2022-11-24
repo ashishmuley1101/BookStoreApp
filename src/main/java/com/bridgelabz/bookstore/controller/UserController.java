@@ -9,6 +9,7 @@ import com.bridgelabz.bookstore.service.IUserService;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -28,6 +31,12 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
 
@@ -61,12 +70,12 @@ public class UserController {
 
     // Creating the User data using @PostMapping Method
     @PostMapping(path = "/register")
-    public ResponseEntity<ResponseDTO> createUserDataData(@Valid @RequestBody UserDTO userDTO) {
+    public String createUserDataData(@Valid @RequestBody UserDTO userDTO) throws MessagingException {
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        UserModel userModelData = null;
-        userModelData = userService.createUserModelData(userDTO);
-        ResponseDTO respDTO = new ResponseDTO("Created User Data Successfully ", userModelData);
-        return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
+       // UserModel userModelData = null;
+        String status = userService.createUserModelData(userDTO);
+        //ResponseDTO respDTO = new ResponseDTO("Created User Data Successfully ", userModelData);
+        return status;//new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
     //Updating User data using Id @PutMapping
@@ -101,9 +110,18 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> generateToken(@RequestBody UserLoginDTO userLoginDTO) throws Exception {
         String userModel =userService.login(userLoginDTO);
-        ResponseDTO responseDTO= new ResponseDTO("User login Successfully..!",userModel);
-        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO("User login Successfully..!", userModel);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
+
+    @GetMapping("/verify")
+    public String verifyUser(@Param("code") String code) {
+        if (userService.verify(code)) {
+            return "Verification Successful..!";
+        } else {
+            return "Verification Failed...!";
+        }
     }
 
 }

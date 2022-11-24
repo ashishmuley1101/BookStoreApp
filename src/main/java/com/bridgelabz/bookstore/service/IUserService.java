@@ -4,6 +4,7 @@ import com.bridgelabz.bookstore.dto.UserDTO;
 import com.bridgelabz.bookstore.dto.UserLoginDTO;
 import com.bridgelabz.bookstore.model.UserModel;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 public interface IUserService {
@@ -13,7 +14,7 @@ public interface IUserService {
         UserModel getUserModelDataById(int userId);
 
 
-        UserModel createUserModelData(UserDTO userDTO);
+        String createUserModelData(UserDTO userDTO) throws MessagingException;
 
 
         void deleteUserModelData(int userId);
@@ -26,4 +27,6 @@ public interface IUserService {
 
 
         String login(UserLoginDTO userLoginDTO) throws Exception;
+
+        boolean verify(String code);
 }

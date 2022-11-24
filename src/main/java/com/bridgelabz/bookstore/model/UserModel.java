@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "book_store")
+@Table(name = "book_store_tbl")
 public class UserModel {
 
     @Id
@@ -33,6 +33,13 @@ public class UserModel {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "verification_code", length = 32)
+    private String verificationCode;
+
+    private boolean enabled;
+
+
+
     public UserModel(UserDTO userDTO) {
 
         this.updateUserModelData(userDTO);
@@ -50,6 +57,8 @@ public class UserModel {
         this.address=userDTO.address;
         this.email=userDTO.email;
         this.password=userDTO.password;
+        this.verificationCode=userDTO.verificationCode;
+        this.enabled=userDTO.enabled;
 
     }
 

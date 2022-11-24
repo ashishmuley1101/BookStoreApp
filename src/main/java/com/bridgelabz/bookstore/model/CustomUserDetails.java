@@ -15,7 +15,6 @@
 //        this.user = user;
 //    }
 //
-//
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
 //        return null;

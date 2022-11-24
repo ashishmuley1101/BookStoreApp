@@ -33,8 +33,11 @@ public @ToString class UserDTO {
     @NotNull(message = "Date of Birth Cannot be Empty")
     public LocalDate dob;
 
-
     public String password;
+
+    public String verificationCode;
+
+    public boolean enabled;
 
 
 
