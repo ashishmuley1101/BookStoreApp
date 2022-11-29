@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.config;
 
 import com.bridgelabz.bookstore.filter.JwtFilter;
+import com.bridgelabz.bookstore.service.CustomUserDetailsService;
 import com.bridgelabz.bookstore.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,10 +26,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService useService;
+    private CustomUserDetailsService useService;
 
     @Autowired
     private JwtFilter jwtFilter;
+
+    @Autowired
+
+    private JwtAuthenticationEntryPoint entryPoint;
 
     /**
      * AuthenticationManagerBuilder use for getting userDetailsService by passing the userAddressBookService as argument
@@ -50,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/login","/register","/verify").permitAll()
                 .anyRequest().authenticated()
-                .and().exceptionHandling().and()
+                .and().exceptionHandling().authenticationEntryPoint(entryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -63,6 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+
+
     //AuthenticationManager for creating bean object.
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -72,6 +80,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new CustomUserDetailsService();
     }
 }
 

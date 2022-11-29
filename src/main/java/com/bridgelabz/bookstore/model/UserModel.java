@@ -8,11 +8,10 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "book_store_tbl")
 public class UserModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
     @Column(name = "first_name")
@@ -37,8 +36,6 @@ public class UserModel {
     private String verificationCode;
 
     private boolean enabled;
-
-
 
     public UserModel(UserDTO userDTO) {
 

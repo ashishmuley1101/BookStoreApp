@@ -23,12 +23,13 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 
 @Service
 @Slf4j
-public class UserService implements IUserService, UserDetailsService {
+public class UserService implements IUserService {
 
 
     @Autowired
@@ -40,7 +41,7 @@ public class UserService implements IUserService, UserDetailsService {
     private IUserRepository userRepository;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private EmailService emailService;
 
     // ModelMapper class for convert the Entity Data object to DTO Object "vice versa".
 
@@ -61,11 +62,6 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
 
-//    @Override
-//    public UserModel getUserModelDataByEmail(String email) {
-//        return userRepository.findByEmail(email);
-//
-//    }
 
     // modelMapper use map() for conversion of object with arguments map(Source, destination).
     @Override
@@ -76,48 +72,7 @@ public class UserService implements IUserService, UserDetailsService {
         userData.setEnabled(false);
         userRepository.save(userData);
 
-         return sendVerificationEmail(userData);
-
-    }
-
-    private String sendVerificationEmail(UserModel userModel)throws MessagingException {
-        String toAddress = userModel.getEmail(); //"ashishmuley1101@gmail.com";
-        String body= userModel.getVerificationCode();//"Hello from body";  //
-        String fromAddress = "ashishmuley1101@gmail.com";
-        String subject = "Please verify your registration...!";
-
-        try {
-
-            // Creating a simple mail message
-            SimpleMailMessage mailMessage
-                    = new SimpleMailMessage();
-
-            // Setting up necessary details
-            mailMessage.setFrom(fromAddress);
-            mailMessage.setTo(toAddress);
-            mailMessage.setText(body);
-            mailMessage.setSubject(subject);
-
-            // Sending the mail
-            mailSender.send(mailMessage);
-            return "Mail Sent Successfully please check your mailbox ...";
-        }
-
-        // Catch block to handle the exceptions
-        catch (Exception e) {
-            return "Error while Sending Mail...!";
-        }
-
-//        MimeMessage message = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(message,true);
-//
-//        helper.setFrom(fromAddress);
-//        helper.setTo(toAddress);
-//        helper.setSubject(subject);
-//        helper.setText(body);
-//
-//        mailSender.send(message);
- //       System.out.println("Email Successfully send please check your mailbox..!");
+         return emailService.sendVerificationEmail(userData);
 
     }
 
@@ -138,7 +93,6 @@ public class UserService implements IUserService, UserDetailsService {
             e.printStackTrace();
             throw new Exception("Inavalid Email/Password...!!");
         }
-        // Generate token for by name using jwtUtil.generateToken().
         return jwtUtil.generateToken(userLoginDTO.getEmail());
     }
 
@@ -155,13 +109,8 @@ public class UserService implements IUserService, UserDetailsService {
 
                 return true;
             }
-
-
         }
 
-//        user.updateUserModelData(userDTO);
-//        return userRepository.save(user);
-//    }
 
     @Override
     public void deleteUserModelData(int userId) {
@@ -175,22 +124,6 @@ public class UserService implements IUserService, UserDetailsService {
         return userRepository.findUserModelDataByEmailId(email);
     }
 
-
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-         UserModel userModelData = userRepository.findByEmail(email);
-
-        if (userModelData == null) {
-            throw new UsernameNotFoundException("Bad credentials");
-        } else {
-
-            //return new CustomUserDetails(userModelData);
-
-            UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(userModelData.getEmail()).password(userModelData.getPassword()).authorities("USER").build();
-            return userDetails;
-        }
-    }
 }
 
 

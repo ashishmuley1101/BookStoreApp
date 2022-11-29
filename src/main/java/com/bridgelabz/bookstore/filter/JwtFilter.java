@@ -1,5 +1,7 @@
 package com.bridgelabz.bookstore.filter;
 
+import com.bridgelabz.bookstore.model.CustomUserDetails;
+import com.bridgelabz.bookstore.service.CustomUserDetailsService;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
-    public UserService service;
+    public CustomUserDetailsService service;
 
     //
 

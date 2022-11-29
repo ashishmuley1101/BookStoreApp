@@ -22,9 +22,7 @@ public interface IUserService {
         List<UserModel> getUserModelDataByEmailId(String email);
 
 
-
         UserModel updateUserModelData(int userId, UserDTO userDTO);
-
 
         String login(UserLoginDTO userLoginDTO) throws Exception;
 

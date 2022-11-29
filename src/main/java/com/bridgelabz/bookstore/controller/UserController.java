@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+//@RequestMapping("/bookstore")
 public class UserController {
 
     @Autowired
@@ -39,16 +40,14 @@ public class UserController {
     private JwtUtil jwtUtil;
 
 
-
     @RequestMapping("/getAll")
-    public ResponseEntity<ResponseDTO> getUserModelData() {
+    public ResponseEntity<ResponseDTO> getUserModelData() throws Exception{
         List<UserModel> userModelDataList;
         userModelDataList = userService.getUserModelData();
         ResponseDTO respDTO = new ResponseDTO("Get Call Successful", userModelDataList);
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-    // Getting Address book data using id @GetMapping
     @GetMapping("/get/{userId}")
     public ResponseEntity<ResponseDTO> getUserModelData(@PathVariable("userId") int userId) {
         UserModel userModelData;
@@ -57,45 +56,30 @@ public class UserController {
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-    // Getting Address Book data by city.
     @GetMapping("/email/{email}")
     public ResponseEntity<ResponseDTO> getUserModelDataByEmail(@PathVariable("email") String email) {
         List<UserModel> userModelDataList = null;
         userModelDataList = userService.getUserModelDataByEmailId(email);
-        ResponseDTO respDTO = new ResponseDTO("Get call success", userModelDataList);
+        ResponseDTO respDTO = new ResponseDTO("Getting all user records successfully..!", userModelDataList);
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-
-
-    // Creating the User data using @PostMapping Method
     @PostMapping(path = "/register")
-    public String createUserDataData(@Valid @RequestBody UserDTO userDTO) throws MessagingException {
+    public ResponseEntity<ResponseDTO> createUserDataData(@Valid @RequestBody UserDTO userDTO) throws MessagingException {
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-       // UserModel userModelData = null;
         String status = userService.createUserModelData(userDTO);
-        //ResponseDTO respDTO = new ResponseDTO("Created User Data Successfully ", userModelData);
-        return status;//new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
+        ResponseDTO respDTO = new ResponseDTO("Created User Data Successfully ", status);
+        return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-    //Updating User data using Id @PutMapping
     @PutMapping("/update/{userId}")
     public ResponseEntity<ResponseDTO> updateUserModelData(@PathVariable("userId") int userId, @Valid @RequestBody UserDTO userDTO) {
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         UserModel userModelData = null;
         userModelData = userService.updateUserModelData(userId, userDTO);
         ResponseDTO respDTO = new ResponseDTO("Updated User Data Successfully", userDTO);
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
-
-//    //Updating User data using Id @PutMapping
-//    @PutMapping("/update/{email}")
-//    public ResponseEntity<ResponseDTO> updateUserModelDataByEmail(@PathVariable("email") String email, @Valid @RequestBody UserDTO userDTO) {
-//        UserModel userModelData = null;
-//        userModelData = userService.updateUserModelDataByEmail(email, userDTO);
-//        ResponseDTO respDTO = new ResponseDTO("Updated User Data Successfully", userDTO);
-//        return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
-//    }
-
 
     //Delete User data using @DeleteMapping Method
     @DeleteMapping("/delete/{userId}")
@@ -105,8 +89,6 @@ public class UserController {
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-    //@PostMapping for providing the authentication details with @RequestBody. and generating token for that URL.
-    //UsernamePasswordAuthenticationToken taking name and password from DTO and reg. with authenticationManager
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> generateToken(@RequestBody UserLoginDTO userLoginDTO) throws Exception {
         String userModel =userService.login(userLoginDTO);
@@ -114,14 +96,16 @@ public class UserController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-
     @GetMapping("/verify")
-    public String verifyUser(@Param("code") String code) {
+    public ResponseEntity<ResponseDTO> verifyUser(@Param("code") String code) {
+        String verify;
         if (userService.verify(code)) {
-            return "Verification Successful..!";
+            verify="Verification Successful..!";
         } else {
-            return "Verification Failed...!";
+            verify="Verification Failed...!";
         }
+        ResponseDTO respDTO = new ResponseDTO("Verification Successfully", verify);
+        return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
 }

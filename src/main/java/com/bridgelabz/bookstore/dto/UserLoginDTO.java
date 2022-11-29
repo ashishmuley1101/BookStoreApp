@@ -9,7 +9,6 @@ import javax.validation.constraints.Pattern;
 @Data
 public @ToString class UserLoginDTO {
 
-
     public String email;
 
     public String password;

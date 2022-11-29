@@ -39,7 +39,4 @@ public @ToString class UserDTO {
 
     public boolean enabled;
 
-
-
-
 }
