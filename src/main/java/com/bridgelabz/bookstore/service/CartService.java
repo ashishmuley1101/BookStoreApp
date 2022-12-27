@@ -5,7 +5,6 @@ import com.bridgelabz.bookstore.exception.BookStoreException;
 import com.bridgelabz.bookstore.model.BookModel;
 import com.bridgelabz.bookstore.model.CartModel;
 import com.bridgelabz.bookstore.model.UserModel;
-import com.bridgelabz.bookstore.repository.IBookRepository;
 import com.bridgelabz.bookstore.repository.ICartRepository;
 import com.bridgelabz.bookstore.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +30,13 @@ public class CartService implements ICartService {
     private UserService userService;
 
     @Override
-    public CartModel getCartById(int userid){
-        return cartRepository.findById(userid).orElseThrow(()
-                -> new BookStoreException("Cart details with UserId " + userid + " does not exit..!"));
+    public List<CartModel> getCartByUserId(int userId){
+        return cartRepository.findByUserId(userId);
+
     }
     @Override
     public List<CartModel> getCart(){
+
         return cartRepository.findAll();
     }
 
@@ -49,12 +49,11 @@ public class CartService implements ICartService {
 
                 CartModel cartModel = cartRepository.findCartByUserIdAndBookId(cartDTO.getBookId(), cartDTO.getUserId());
                // Resetting the book quantity in BookModel
-                bookModel.get().setQuantity(bookModel.get().getQuantity()-cartDTO.getQuantity());
+//                bookModel.get().setQuantity(bookModel.get().getQuantity()-cartDTO.getQuantity());
                 if (cartModel != null) {
                     CartModel cartModel1 = update(cartModel.getCartId(),cartDTO);
                     return cartModel1;
                 } else {
-
                     double totalPrice = cartDTO.getQuantity() * bookModel.get().getPrice();
                     CartModel cartModel1 = new CartModel(cartDTO.getQuantity(), totalPrice, userModel.get(), bookModel.get());
 
@@ -77,11 +76,12 @@ public class CartService implements ICartService {
         }else  throw new BookStoreException("No book found with book Id or you are not right access user");
     }
 
-
     @Override
-    public void deleteById(int userId){
-        CartModel cartModel = this.getCartById(userId);
-           cartRepository.delete(cartModel);
+    public void deleteById(int cartId)throws NumberFormatException{
+//            Optional<Object> cartModel=this.getCartById(userId);
+        Optional<CartModel> cartModel=cartRepository.findById(cartId);
+        if (cartModel.isPresent())
+         cartRepository.delete(cartModel.get());
     }
 
     @Override

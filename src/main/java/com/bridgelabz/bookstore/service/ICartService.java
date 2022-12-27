@@ -4,11 +4,10 @@ import com.bridgelabz.bookstore.dto.CartDTO;
 import com.bridgelabz.bookstore.model.CartModel;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ICartService {
 
-    CartModel getCartById(int id);
+    List<CartModel> getCartByUserId(int id);
 
     List<CartModel> getCart();
 

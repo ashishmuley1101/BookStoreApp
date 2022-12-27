@@ -13,15 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RestController
-@RequestMapping("/bookstore/book")
+//@RequestMapping("/bookstore/book")
 public class BookController {
     @Autowired
     IBookService bookService;
 
 
 
-    @GetMapping("/getAll")
+    @GetMapping("/getAllBook")
     public ResponseEntity<ResponseDTO> getAllBookData() {
         List<BookModel> listOfBooks = bookService.getAllBookData();
         ResponseDTO responseDto = new ResponseDTO("Data retrieved successfully :", listOfBooks);
@@ -35,7 +36,7 @@ public class BookController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/searchBookByBookName/{bookName}")
+    @GetMapping("/searchBookByName/{bookName}")
     public ResponseEntity<ResponseDTO> getBookModelDataByName(@PathVariable("bookName") String bookName) {
         List<BookModel> bookModelDataList = null;
         bookModelDataList = bookService.getBookModelDataByName(bookName);

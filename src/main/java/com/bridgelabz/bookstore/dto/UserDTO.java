@@ -7,6 +7,7 @@ import lombok.Generated;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
@@ -29,14 +30,16 @@ public @ToString class UserDTO {
     @NotNull(message = "Address cannot be null")
     public String address;
 
-    @JsonFormat(pattern = "dd MMM yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Date of Birth Cannot be Empty")
     public LocalDate dob;
 
+    @NotEmpty(message = "Password Field can't be Empty")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@#$%!]).{8,}$", message = "Invalid Password")
     public String password;
-
     public String verificationCode;
 
+    private String token;
     public boolean enabled;
 
 }

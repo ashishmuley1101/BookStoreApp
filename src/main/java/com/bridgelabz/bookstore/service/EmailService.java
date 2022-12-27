@@ -23,13 +23,13 @@ public class EmailService {
 
     // Cancel order Service
      public OrderModel sendEmailCancel(OrderModel orderModel)throws MessagingException {
-        String toAddress = orderModel.getUser().getEmail(); //"ashishmuley1101@gmail.com";
-        String body = " Date of cancel Order : " + orderModel.getOrderDate() + "\n Cancel Order Book Name : " + orderModel.getBook().getBookName() + "\n Cancel Book Quantity : "
+        String toAddress = "ashishmuley1101@gmail.com";
+        String body = " Date of cancel Order : " + orderModel.getOrderDate() + "\n Cancel Order Book Name : " + orderModel + "\n Cancel Book Quantity : "
                 + orderModel.getQuantity() + "\n Total Book Price Rs. " + orderModel.getTotalPrice();
         String fromAddress = "ashishmuley1101@gmail.com";
         String subject = "Your Order Cancelled successfully";
 
-        if (orderModel.getUser().getEmail() != null) {
+        if (orderModel != null) {
             // Creating a simple mail message
             SimpleMailMessage mailMessage
                     = new SimpleMailMessage();
@@ -50,14 +50,14 @@ public class EmailService {
     }
 
     //Order Placed Service
-    public OrderModel sendEmailPlaced(OrderModel orderModel)throws MessagingException {
-        String toAddress = orderModel.getUser().getEmail(); //"ashishmuley1101@gmail.com";
-        String body= " Date of Order : "+orderModel.getOrderDate()+"\n Order Book Name : "+orderModel.getBook().getBookName()+"\n Book Quantity : "
+    public OrderModel sendEmailPlaced(OrderModel orderModel,UserModel userModel)throws MessagingException {
+        String toAddress =  userModel.getEmail();//"ashishmuley1101@gmail.com";
+        String body = " Date of Order : "+orderModel.getOrderDate()+"\n Book Quantity : "
                 +orderModel.getQuantity()+"\n Total Book Price Rs. "+orderModel.getTotalPrice();
         String fromAddress = "ashishmuley1101@gmail.com";
         String subject = "Your Order Placed successfully";
 
-        if (orderModel.getUser().getEmail() != null) {
+        if (orderModel!= null) {
             // Creating a simple mail message
             SimpleMailMessage mailMessage
                     = new SimpleMailMessage();
@@ -83,7 +83,7 @@ public class EmailService {
 
     public String sendVerificationEmail(UserModel userModel)throws MessagingException {
         String toAddress = userModel.getEmail(); //"ashishmuley1101@gmail.com";
-        String body= userModel.getVerificationCode();//"Hello from body";  //
+        String body= "Please click on below link for verification. \n \n http://localhost:9191/verify?code="+userModel.getVerificationCode();//"Hello from body";  //
         String fromAddress = "ashishmuley1101@gmail.com";
         String subject = "Please verify your registration...!";
 
@@ -101,7 +101,7 @@ public class EmailService {
 
             // Sending the mail
             mailSender.send(mailMessage);
-            return "Mail Sent Successfully please check your mailbox ...";
+            return "Mail Sent Successfully please check your mailbox for Verification...";
         }
 
         // Catch block to handle the exceptions

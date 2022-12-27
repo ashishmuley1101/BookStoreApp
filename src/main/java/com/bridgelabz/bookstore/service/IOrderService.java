@@ -9,13 +9,17 @@ import java.util.List;
 
 public interface IOrderService {
 
-    OrderModel createOrder(OrderDTO orderDTO) throws MessagingException;
+    OrderModel createOrder(int userId,OrderDTO orderDTO) throws MessagingException;
 
     List<OrderModel> getAllOrderRecords();
 
-    OrderModel cancelOrderRecord(int userId) throws MessagingException;
+    void cancelOrderRecord(int orderId) throws MessagingException;
 
-    OrderModel getOrderItemByUserId(int orderId);
+    List<OrderModel> getOrderItemByUserId(int userId);
 
     OrderModel update(int id, OrderDTO orderDTO);
+
+    OrderModel getOrderItemById(int id);
+
+
 }

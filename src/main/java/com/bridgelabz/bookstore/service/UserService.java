@@ -1,9 +1,7 @@
 package com.bridgelabz.bookstore.service;
-
 import com.bridgelabz.bookstore.dto.UserDTO;
 import com.bridgelabz.bookstore.dto.UserLoginDTO;
 import com.bridgelabz.bookstore.exception.BookStoreException;
-
 import com.bridgelabz.bookstore.model.UserModel;
 import com.bridgelabz.bookstore.repository.IUserRepository;
 import com.bridgelabz.bookstore.util.JwtUtil;
@@ -11,19 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.persistence.NonUniqueResultException;
 import java.util.List;
 
 
@@ -61,19 +51,20 @@ public class UserService implements IUserService {
                 -> new BookStoreException("Person with UserId " + userId + " does not exit..!"));
     }
 
-
-
     // modelMapper use map() for conversion of object with arguments map(Source, destination).
     @Override
-    public String createUserModelData(UserDTO userDTO) throws MessagingException {
-        UserModel userData = modelMapper.map(userDTO, UserModel.class);
-        String randomCode = RandomString.make(32);
-        userData.setVerificationCode(randomCode);
-        userData.setEnabled(false);
-        userRepository.save(userData);
-
-         return emailService.sendVerificationEmail(userData);
-
+    public String createUserModelData(UserDTO userDTO) throws MessagingException,NullPointerException {
+        UserModel userData1=this.getUserModelDataByEmailId(userDTO.getEmail());
+        if (userData1 == null) {
+            UserModel userData = modelMapper.map(userDTO, UserModel.class);
+            String randomCode = RandomString.make(32);
+            userData.setVerificationCode(randomCode);
+            userData.setEnabled(false);
+            userRepository.save(userData);
+            return emailService.sendVerificationEmail(userData);
+        }else{
+            return "Email id already register with another user..! ";
+        }
     }
 
     @Override
@@ -84,7 +75,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public String login(UserLoginDTO userLoginDTO) throws Exception {
+    public UserModel login(UserLoginDTO userLoginDTO) throws Exception {
+
         try {
             this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
@@ -93,7 +85,12 @@ public class UserService implements IUserService {
             e.printStackTrace();
             throw new Exception("Inavalid Email/Password...!!");
         }
-        return jwtUtil.generateToken(userLoginDTO.getEmail());
+          String str=jwtUtil.generateToken(userLoginDTO.getEmail());
+          UserModel userData=this.getUserModelDataByEmailId(userLoginDTO.getEmail());
+          userData.setToken(str);
+          userRepository.save(userData);
+          return userData;
+
     }
 
     @Override
@@ -120,7 +117,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserModel> getUserModelDataByEmailId(String email) {
+    public UserModel getUserModelDataByEmailId(String email) {
         return userRepository.findUserModelDataByEmailId(email);
     }
 

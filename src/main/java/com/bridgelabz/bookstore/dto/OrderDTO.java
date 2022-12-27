@@ -9,12 +9,8 @@ import lombok.Setter;
 @Getter
 public class OrderDTO {
 
-    private int cartId;
-
-    private int quantity;
+    private int userId;
 
     private String address;
-
-
 
 }

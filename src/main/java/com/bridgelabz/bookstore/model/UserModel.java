@@ -37,6 +37,9 @@ public class UserModel {
 
     private boolean enabled;
 
+    @Column(name = "token")
+    private String token;
+
     public UserModel(UserDTO userDTO) {
 
         this.updateUserModelData(userDTO);
@@ -56,6 +59,7 @@ public class UserModel {
         this.password=userDTO.password;
         this.verificationCode=userDTO.verificationCode;
         this.enabled=userDTO.enabled;
+        this.token=userDTO.getToken();
 
     }
 

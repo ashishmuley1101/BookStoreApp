@@ -10,6 +10,6 @@ public class BookDTO {
     private String bookDescription;
     private String bookImg;
     private Integer price;
-    private Integer quantity;
+    private int quantity;
 
 }

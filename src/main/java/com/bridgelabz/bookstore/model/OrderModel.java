@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -20,34 +21,33 @@ public class OrderModel {
 
     @CreationTimestamp
     private LocalDate orderDate;
-    private int price;
+
     private int quantity;
     private String address;
     private double totalPrice;
 
-    @OneToOne
-    @JoinColumn(name = "userId")
-    private UserModel user;
-    @ManyToOne
+    private int userId;
+    @ManyToMany
     @JoinColumn(name = "bookId")
-    private BookModel book;
+    private List<BookModel> book;
 
-    @OneToOne
-    @JoinColumn(name = "cartId")
-    private CartModel cartModel;
+    @OneToMany(fetch = FetchType.LAZY,orphanRemoval=true)
+    @org.hibernate.annotations.ForeignKey(name = "none")
+    private List<CartModel> cartModel;
 
     private boolean cancel;
 
 
-    public OrderModel(OrderDTO orderDTO, BookModel bookModel, UserModel userModel, CartModel cartModel) {
-        this.address = userModel.getAddress();
-        this.price = bookModel.getPrice();
-        this.quantity = cartModel.getQuantity();
-        this.user = userModel;
-        this.book = bookModel;
-        this.cartModel = cartModel;
-        this.totalPrice = cartModel.getTotalPrice();
-    }
+//    public OrderModel(String address,
+//                      List<BookModel> bookModel, UserModel userModel, List<CartModel> cartModel,
+//              double totalPrice, int totalQuantity ) {
+//        this.address = address;
+//        this.quantity = totalQuantity;
+//        this.user = userModel;
+//        this.book = bookModel;
+//        this.cartModel = cartModel;
+//        this.totalPrice = totalPrice;
+//    }
 
     public OrderModel() {
 
@@ -58,6 +58,16 @@ public class OrderModel {
     }
 
     public OrderModel(int id, Integer quantity, String address, BookModel bookModel, UserModel userModel, Object cancel) {
+    }
+
+    public OrderModel(int userId, String address, List<CartModel> cartModel, List<BookModel> orderedBooks, int totalOrderQty, double totalOrderPrice) {
+        this.userId=userId;
+        this.address = address;
+        this.quantity = totalOrderQty;
+
+        this.book = orderedBooks;
+        this.cartModel = cartModel;
+        this.totalPrice = totalOrderPrice;
     }
 }
 

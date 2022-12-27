@@ -14,4 +14,6 @@ public interface ICartRepository extends JpaRepository<CartModel,Integer> {
     @Query(value = "SELECT * FROM cart_model WHERE user_id=:userId AND book_id=:bookId", nativeQuery = true)
     CartModel findCartByUserIdAndBookId(int bookId, int userId);
 
+    @Query(value = "select * from cart_model where user_id=:userId",nativeQuery = true)
+    List<CartModel> findByUserId(int userId);
 }

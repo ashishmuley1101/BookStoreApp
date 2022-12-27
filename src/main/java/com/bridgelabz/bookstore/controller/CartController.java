@@ -11,37 +11,39 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RestController
-@RequestMapping("/bookstore/cart")
+//@RequestMapping("/bookstore/cart")
 public class CartController {
 
     @Autowired
     ICartService cartService;
 
 
-    @GetMapping("/getAll")
+    @GetMapping("/getAllCart")
     public ResponseEntity<ResponseDTO> getCart() {
         List<CartModel> cartModel = cartService.getCart();
         ResponseDTO responseDTO = new ResponseDTO("Getting all successfully",cartModel);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/getById/{userId}")
+    @GetMapping("/getCartByUserId/{userId}")
     public ResponseEntity<ResponseDTO> getcartById(@PathVariable int userId) {
-       CartModel cartModel = cartService.getCartById(userId);
+       List<CartModel> cartModel = cartService.getCartByUserId(userId);
         ResponseDTO responseDTO = new ResponseDTO("Record getting by ID : "+userId+" successfully",cartModel);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/insert")
+    @PostMapping("/createCart")
     public ResponseEntity<ResponseDTO> create(@RequestBody CartDTO cartDTO) {
         CartModel cartModel = cartService.createCart(cartDTO);
         ResponseDTO responseDTO = new ResponseDTO("Record inserted successfully",cartModel);
         return new ResponseEntity(responseDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{cartId}")
+    @PutMapping("/updateCartById/{cartId}")
     public ResponseEntity<ResponseDTO> updateByCartId(@PathVariable int cartId,@RequestBody CartDTO cartDTO){
         CartModel cartModel=cartService.update(cartId,cartDTO);
         ResponseDTO responseDTO= new ResponseDTO("Update cart by id "+cartId+" successfully..!",cartModel);
@@ -55,7 +57,7 @@ public class CartController {
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/empty")
+    @DeleteMapping("/emptyCart")
     public ResponseEntity<ResponseDTO> deleteById() {
         String cartModel = cartService.emptyCart();
         ResponseDTO responseDTO = new ResponseDTO("Remove all cart item successfully..!", cartModel);

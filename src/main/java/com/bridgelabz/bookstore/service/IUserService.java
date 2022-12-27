@@ -19,12 +19,12 @@ public interface IUserService {
 
         void deleteUserModelData(int userId);
 
-        List<UserModel> getUserModelDataByEmailId(String email);
+        UserModel getUserModelDataByEmailId(String email);
 
 
         UserModel updateUserModelData(int userId, UserDTO userDTO);
 
-        String login(UserLoginDTO userLoginDTO) throws Exception;
+        UserModel login(UserLoginDTO userLoginDTO) throws Exception;
 
         boolean verify(String code);
 }

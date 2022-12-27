@@ -54,7 +54,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .antMatchers("/login","/register","/verify").permitAll()
+                .antMatchers("/login","/register","/verify","/getAllBook","/searchBookByName/{bookName}",
+                        "/sortAsc","/sortDesc","/getAllCart","/getCartByUserId/{userId}","/remove/{cartId}",
+                        "/updateCartById/{cartId}","/createCart","/emptyCart","/updateCartById/{cartId}"
+                ,"/getAllOrder","/getOrderByUserId/{userId}","/bookOrder/{userId}","/getAllOrder"
+                ,"/cancelOrder/{id}").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(entryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
+
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 @RestController
 //@RequestMapping("/bookstore")
 public class UserController {
@@ -58,7 +60,7 @@ public class UserController {
 
     @GetMapping("/email/{email}")
     public ResponseEntity<ResponseDTO> getUserModelDataByEmail(@PathVariable("email") String email) {
-        List<UserModel> userModelDataList = null;
+        UserModel userModelDataList = null;
         userModelDataList = userService.getUserModelDataByEmailId(email);
         ResponseDTO respDTO = new ResponseDTO("Getting all user records successfully..!", userModelDataList);
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
@@ -91,7 +93,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> generateToken(@RequestBody UserLoginDTO userLoginDTO) throws Exception {
-        String userModel =userService.login(userLoginDTO);
+        UserModel userModel =userService.login(userLoginDTO);
         ResponseDTO responseDTO = new ResponseDTO("User login Successfully..!", userModel);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -100,11 +102,12 @@ public class UserController {
     public ResponseEntity<ResponseDTO> verifyUser(@Param("code") String code) {
         String verify;
         if (userService.verify(code)) {
-            verify="Verification Successful..!";
+            verify="Verification Successfull";
         } else {
-            verify="Verification Failed...!";
+            verify=" Failed It maybe already verified or verification code is incorrect.";
+
         }
-        ResponseDTO respDTO = new ResponseDTO("Verification Successfully", verify);
+        ResponseDTO respDTO = new ResponseDTO("Verification ", verify);
         return new ResponseEntity<ResponseDTO>(respDTO, HttpStatus.OK);
     }
 
